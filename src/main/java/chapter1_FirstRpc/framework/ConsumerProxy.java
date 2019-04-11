@@ -1,0 +1,48 @@
+package chapter1_FirstRpc.framework;
+
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
+import java.net.Socket;
+
+/**
+ * @ClassName: ConsumerProxy
+ * @Description: ServiceAPI接口的代理类；内部逻辑通过socket与服务的提供方进行通信，
+ * 包括写入调用参数与获取调用返回的结果对象，通过代理通信及获取返回结果等复杂逻辑对接口调用方透明
+ * @Author: wuwx
+ * @Date: 2019-04-11 13:25
+ **/
+public class ConsumerProxy {
+
+    public static <T> T consume(final Class<T> interfaceClass, final String host, final int port) throws Exception {
+        return (T) Proxy.newProxyInstance(interfaceClass.getClassLoader(), new Class<?>[]{interfaceClass}, new InvocationHandler() {
+            @Override
+            public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+                Socket socket = new Socket(host, port);
+                try {
+                    ObjectOutputStream outputStream = new ObjectOutputStream(socket.getOutputStream());
+                    try {
+                        outputStream.writeUTF(method.getName());
+                        outputStream.writeObject(args);
+                        ObjectInputStream inputStream = new ObjectInputStream(socket.getInputStream());
+                        try {
+                            Object result = inputStream.readObject();
+                            if (result instanceof Throwable) {
+                                throw (Throwable) result;
+                            }
+                            return result;
+                        } finally {
+                            inputStream.close();
+                        }
+                    } finally {
+                        outputStream.close();
+                    }
+                } finally {
+                    socket.close();
+                }
+            }
+        });
+    }
+}
