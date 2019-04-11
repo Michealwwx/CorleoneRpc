@@ -1,4 +1,6 @@
-package chapter3_sederialization;
+package chapter3_sederialization.defaultInJava;
+
+import chapter3_sederialization.ISerializer;
 
 import java.io.*;
 
