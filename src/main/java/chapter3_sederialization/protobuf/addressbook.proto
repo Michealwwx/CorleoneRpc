@@ -1,0 +1,9 @@
+syntax = "proto2"; //指定版本
+package protobufserializer;
+option java_package="";
+option java_outer_classname="Student";
+message Student1{
+    required string name =1;
+    required int32 id=2;
+    optional string email=3;
+}
