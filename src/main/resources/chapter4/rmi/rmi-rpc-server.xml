@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+         http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+    <bean class="org.springframework.remoting.rmi.RmiServiceExporter">
+        <property name="serviceName" value="userRmiService"></property>
+        <property name="service" ref="userService"></property>
+        <property name="serviceInterface" value="chapter4_serviceexport.springproxy.UserService"></property>
+        <property name="registryPort" value="1199"></property>
+    </bean>
+</beans>
